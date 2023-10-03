@@ -1,0 +1,95 @@
+{% extends "./index.html" %}
+
+{% block title %} Gestión de Materias {% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-dismissible alert-success">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <strong class="text-dark">{{ message }}</strong>
+            </div>
+            {% endfor %}
+            {% endif %}
+            <h2>Gestión de Materias</h2>
+            <div class="card">
+                <div class="card-body"> 
+                    <form action="{% url 'registrar_materia' %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <input type="text" id="txtNombre" name="txtNombre" class="form-control" placeholder="Nombre" maxlength="50" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="txtDescripcion" name="txtDescripcion" class="form-control" placeholder="Descripcion" maxlength="50" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Selecciona una imagen</label>
+                            <input type="file" id="imgFoto" name="imgFoto" class="form-control" accept="image/*" required>    
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-success btn-block text-white">Guardar</button>
+                        </div>
+                    </form>                        
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
+            <h1>Listado de Materias</h1>
+            <div class="table-responsive py-2">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Id</th>
+                            <th>Nombre</th>
+                            <th>Descripcion</th>
+                            <th>Foto</th>
+                            <th colspan="2">Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in materias %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{c.id}}</td>
+                            <td>{{c.nombre}}</td>
+                            <td>{{c.descripcion}}</td>
+                            <td><img src="{% static 'media/evidencia_img'%}{{c.foto}}" alt="{{c.nombre}}" class="img-fluid"></td>
+                            <td>
+                                <a href="{% url 'editar_materia' c.id %}" class="btn btn-info">Editar</a>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirmarEliminar{{c.id}}">
+                                    Eliminar
+                                </button>
+                                <!-- Modal de confirmación de eliminación -->
+                                <div class="modal fade" id="confirmarEliminar{{c.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Confirmar eliminación</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                ¿Estás seguro de que deseas eliminar esta materia?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                                <a href="{% url 'eliminar_materia' c.id %}" class="btn btn-danger">Eliminar</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
